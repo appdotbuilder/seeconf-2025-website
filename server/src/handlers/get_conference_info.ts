@@ -1,10 +1,27 @@
+import { db } from '../db';
+import { conferenceInfoTable } from '../db/schema';
 import { type ConferenceInfo } from '../schema';
+import { eq } from 'drizzle-orm';
 
-export async function getConferenceInfo(key?: string): Promise<ConferenceInfo[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching conference info content from the database.
-    // If key is provided, return only that specific content section.
-    // If no key provided, return all content sections.
-    // Should handle metadata JSON parsing.
-    return [];
-}
+export const getConferenceInfo = async (key?: string): Promise<ConferenceInfo[]> => {
+  try {
+    // Build query conditionally
+    if (key) {
+      const results = await db.select()
+        .from(conferenceInfoTable)
+        .where(eq(conferenceInfoTable.key, key))
+        .execute();
+      
+      return results;
+    } else {
+      const results = await db.select()
+        .from(conferenceInfoTable)
+        .execute();
+      
+      return results;
+    }
+  } catch (error) {
+    console.error('Conference info retrieval failed:', error);
+    throw error;
+  }
+};
